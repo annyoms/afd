@@ -1,0 +1,118 @@
+!DOCTYPE html
+html lang=ar dir=rtl
+head
+    meta charset=UTF-8
+    meta name=viewport content=width=device-width, initial-scale=1.0
+    titleتحديد الموقع الجغرافيtitle
+    style
+        body {
+            font-family Arial, sans-serif;
+            text-align center;
+            background-color #f4f4f9;
+            margin 0;
+            padding 50px;
+        }
+        .container {
+            background-color white;
+            padding 30px;
+            border-radius 10px;
+            box-shadow 0 4px 8px rgba(0,0,0,0.1);
+            max-width 400px;
+            margin auto;
+        }
+        button {
+            padding 12px 24px;
+            font-size 16px;
+            cursor pointer;
+            background-color #007bff;
+            color white;
+            border none;
+            border-radius 5px;
+            transition background-color 0.3s;
+        }
+        buttonhover {
+            background-color #0056b3;
+        }
+        #result {
+            margin-top 20px;
+            font-size 15px;
+            color #333;
+            line-height 1.6;
+        }
+        a {
+            color #28a745;
+            text-decoration none;
+            font-weight bold;
+        }
+    style
+head
+body
+
+    div class=container
+        h2مشاركة الموقعh2
+        pنحتاج إلى إذنك للوصول إلى موقعك الجغرافي لتقديم الخدمة المطلوبة.p
+        
+        !-- زر بدء طلب الموقع --
+        button onclick=getLocation()مشاركة موقعي الآنbutton
+        
+        !-- المكان الذي ستظهر فيه النتيجة أو رسائل الخطأ --
+        div id=resultdiv
+    div
+
+    script
+        const resultDiv = document.getElementById(result);
+
+        function getLocation() {
+            resultDiv.innerHTML = iجاري طلب الإذن وتحديد الموقع... يرجى الضغط على 'السماح' (Allow) في النافذة المنبثقة.i;
+
+            if (navigator.geolocation) {
+                 طلب الموقع مع إعدادات دقة عالية
+                navigator.geolocation.getCurrentPosition(showPosition, showError, {
+                    enableHighAccuracy true,  طلب أعلى دقة ممكنة (GPS)
+                    timeout 10000,            أقصى وقت للانتظار (10 ثواني)
+                    maximumAge 0              عدم استخدام موقع قديم مخزن في الذاكرة
+                });
+            } else {
+                resultDiv.innerHTML = span style='colorred;'عذراً، متصفحك لا يدعم ميزة تحديد الموقع.span;
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+
+             عرض النتيجة للمستخدم
+            resultDiv.innerHTML = 
+                span style='colorgreen;'bتم تحديد الموقع بنجاح!bspanbr +
+                خط العرض  + lat + br +
+                خط الطول  + lon + br +
+                دقة الموقع  + accuracy +  مترbrbr +
+                a href='httpswww.google.commapsq= + lat + , + lon + ' target='_blank'🌍 عرض الموقع على خرائط جوجلa;
+            
+            
+              ملاحظة للمطور 
+              هنا يمكنك استخدام fetch API لإرسال المتغيرين (lat و lon) 
+              إلى قاعدة البيانات الخاصة بك برمجياً في الخلفية.
+             
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED
+                    resultDiv.innerHTML = span style='colorred;'تم رفض الإذن. لا يمكننا تحديد موقعك إلا بموافقتك.span;
+                    break;
+                case error.POSITION_UNAVAILABLE
+                    resultDiv.innerHTML = span style='colorred;'معلومات الموقع غير متوفرة حالياً (قد يكون الـ GPS مغلقاً).span;
+                    break;
+                case error.TIMEOUT
+                    resultDiv.innerHTML = span style='colorred;'انتهى وقت الطلب دون استجابة من النظام.span;
+                    break;
+                case error.UNKNOWN_ERROR
+                    resultDiv.innerHTML = span style='colorred;'حدث خطأ غير معروف.span;
+                    break;
+            }
+        }
+    script
+body
+html
